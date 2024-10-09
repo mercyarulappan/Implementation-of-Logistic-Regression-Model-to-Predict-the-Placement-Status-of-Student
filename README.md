@@ -21,66 +21,66 @@ Program to implement the the Logistic Regression Model to Predict the Placement 
 Developed by: MERCY A
 RegisterNumber: 212223110027
 */
-import numpy as np
 import pandas as pd
-from sklearn.datasets import fetch_california_housing
-from sklearn.linear_model import SGDRegressor
-from sklearn.multioutput import MultiOutputRegressor
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error
-from sklearn.preprocessing import StandardScaler
-
-data=fetch_california_housing()
-df=pd.DataFrame(data.data,columns=data.feature_names)
-df['target']=data.target
-print(df.info())
-
-X = df.drop(columns=['AveOccup','target'])
-Y = df[['AveOccup','target']]
-X_train,X_test,Y_train,Y_test = train_test_split(X,Y,test_size=0.2,random_state = 1)
-
-# Scale the features and target variable
-scaler_X = StandardScaler()
-scaler_Y = StandardScaler()
-
-# Converting the data in range
-X_train = scaler_X.fit_transform(X_train)
-X_test = scaler_X.fit_transform(X_train)
-Y_train = scaler_Y.fit_transform(Y_train)
-Y_test = scaler_Y.fit_transform(Y_train)
-
-
-# Initialize the SGDRegressor
-sgd = SGDRegressor(max_iter=1000 ,tol=1e-3)
-
-# Use MultiOutputRegressor to handle multiple output variables
-multi_output_sgd = MultiOutputRegressor(sgd)
-
-# Train the model
-multi_output_sgd.fit(X_train,Y_train)
-
-# Predict on the test data
-Y_pred = multi_output_sgd.predict(X_test)
-
-# inverse transform the predictions to get them back to the original scale
-Y_pred = scaler_Y.inverse_transform(Y_pred)
-Y_test = scaler_Y.inverse_transform(Y_test)
-
-# Evaluate the model using mean squared error
-mse = mean_squared_error(Y_test, Y_pred)
-print("Mean Squared Error:",mse)
-
-# Optionally, print some predictions 
-print("\nPredictions:\n",Y_pred[:5])    ## Print first 5 predictions
+from sklearn.linear_model import LogisticRegression
+dataset=pd.read_csv('Placement.csv')
+dataset
+dataset=dataset.drop('sl_no',axis=1)
+dataset["gender"]=dataset["gender"].astype("category")
+dataset["ssc_b"]=dataset["ssc_b"].astype("category")
+dataset["hsc_b"]=dataset["hsc_b"].astype("category")
+dataset["degree_t"]=dataset["degree_t"].astype("category")
+dataset["workex"]=dataset["workex"].astype("category")
+dataset["specialisation"]=dataset["specialisation"].astype("category")
+dataset["status"]=dataset["status"].astype("category")
+dataset["hsc_s"]=dataset["hsc_s"].astype("category")
+dataset.dtypes
+dataset["gender"]=dataset["gender"].cat.codes
+dataset["ssc_b"]=dataset["ssc_b"].cat.codes
+dataset["hsc_b"]=dataset["hsc_b"].cat.codes
+dataset["degree_t"]=dataset["degree_t"].cat.codes
+dataset["workex"]=dataset["workex"].cat.codes
+dataset["specialisation"]=dataset["specialisation"].cat.codes
+dataset["status"]=dataset["status"].cat.codes
+dataset["hsc_s"]=dataset["hsc_s"].cat.codes
+dataset.info()
+X=dataset.iloc[:,:-1].values
+Y=dataset.iloc[:,-1].values
+print(X.shape)
+print(Y.shape)
+X_train,X_test,Y_train,Y_test=train_test_split(X,Y,test_size=0.2,random_state=42)
+print(X_train.shape)
+print(Y_train.shape)
+print(X_test.shape)
+print(Y_test.shape)
+clf = LogisticRegression()
+clf.fit(X_train,Y_train)
+clf.score(X_test,Y_test)
+Y_pred=clf.predict(X_test)
+print(Y_pred)
+from sklearn.metrics import confusion_matrix,accuracy_score
+cf=confusion_matrix(Y_test,Y_pred)
+print(cf)
+accuracy=accuracy_score(Y_test,Y_pred)
+print(accuracy)
 
 ```
 
 ## Output:
+![Screenshot 2024-10-09 103356](https://github.com/user-attachments/assets/ffac10b3-c92c-4c7f-85b2-1f77a2010ab8)
 
-![Screenshot 2024-09-04 140359](https://github.com/user-attachments/assets/c9d360be-f852-4718-8b56-1dab1a6f0aec)
+![Screenshot 2024-10-09 103427](https://github.com/user-attachments/assets/2624884e-3053-42d1-8072-75516f505650)
 
-![Screenshot 2024-09-04 135720](https://github.com/user-attachments/assets/f13c93d0-8cda-47fd-a59e-157c9a7aded9)
+![Screenshot 2024-10-09 103433](https://github.com/user-attachments/assets/317ab997-3add-431f-8c3b-e136cc114cf8)
 
+![Screenshot 2024-10-09 103440](https://github.com/user-attachments/assets/f56e442d-5c4b-485e-a20b-8b617a8361fc)
+
+![Screenshot 2024-10-09 103445](https://github.com/user-attachments/assets/5bcb4842-08a6-4125-97b9-badea00f9490)
+
+![Screenshot 2024-10-09 103451](https://github.com/user-attachments/assets/c8dad4d3-7df1-4035-aedf-18321ed6194b)
+
+![Screenshot 2024-10-09 103456](https://github.com/user-attachments/assets/5705dca6-5054-44b4-9288-0bb43dded1bf)
 
 
 ## Result:
